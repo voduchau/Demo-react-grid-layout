@@ -42,12 +42,9 @@ function App() {
           const X0 = temp.filter(layItem => {
             return true;
           });
-          console.log(temp,'temp')
-
           for(let i = 0; i < temp.length; i++ ){
             for(let j = i + 1; j < temp.length; j++){
               if(temp[j].y === temp[i].y){
-                console.log(i,j,'check');
                 let maxIndex;
                 if(temp[j].h > temp[i].h){
                   maxIndex = j;
@@ -66,11 +63,8 @@ function App() {
             checkHeight.push(temp[i].h + temp[i].y);
           }
           var max_of_height = Math.max.apply(Math, checkHeight);
-          console.log(temp,'temp');
-          console.log(checkHeight,'checkHeight')
           while(max_of_height > 10){
           const maxInTemp = Math.max.apply(Math, temp.map(function(o) { return o.h; }))
-          console.log(maxInTemp,'maxInTemp');
           let nameI = "";
           for(let i = 0; i < temp.length; i++){
             if(temp[i].h == maxInTemp){
@@ -86,29 +80,6 @@ function App() {
           }
           max_of_height--;
           }
-
-
-          // const max0 = Math.max.apply(Math, filterY0.map(function(o) { return o.h; }))
-          
-          let total0 = X0.reduce((total, item) => total + item.h, 0)
-          // console.log(total0,'total01')
-          // while (total0 > 10) {
-          //   for(let i = 0; i < temp.length; i++){
-          //     for(let j = 0; j < X0.length; j++){
-          //       if(temp[i].i === X0[j].i){
-          //         console.log(temp[i].h,'hihi')
-          //         if(temp[i].h > 1) {
-          //           temp[i].h--;
-          //         }
-          //         else {
-          //           console.log(i,j,'check i j')
-          //         }
-          //       }
-          //     }
-          //   }
-          //   total0--;
-          // }
-          console.log(total0,'total02')
           if(temp2.length === lay.length) {
           setLay(temp2);
           }
