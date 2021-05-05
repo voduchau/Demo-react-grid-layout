@@ -80,7 +80,7 @@ function App() {
     var file = e.target.files[0];
     var reader = new FileReader();
 
-    console.log(refLayout1,'refLayout1')
+    console.log(refLayout1.current.childNodes[index].innerHTML = "<video width='100%' height='100%' controls><source src='https://res.cloudinary.com/c81admanagementstorage/video/upload/v1620223441/Videos/604c7c0cb58ead018da468b3/4K_EPIC_Pepsi_Zero_Sugar_B_Roll_inspired_by_Daniel_Schiffer_-_Pepsi_Commercial_Video_%ED%8E%A9%EC%8B%9C_%EC%A0%9C%EB%A1%9C_%EC%8A%88%EA%B1%B0_%EB%B9%84%EB%A1%A4_px69dh.webm' type='video/mp4'/></video>",'refLayout1')
     if (file && file.type.match('image')) {
       reader.onload = function (e) {
         console.log(e, 'e')
