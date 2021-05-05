@@ -13,27 +13,15 @@ function App() {
   const layout = [
     { i: 'b', x: 0, y: 0, w: 5, h: 5, isBounded: true },
     { i: 'c', x: 1, y: 0, w: 4, h: 4, isBounded: true },
-    // { i: 'd', x: 2, y: 0, w: 1, h: 1 },
-    // { i: 'e', x: 3, y: 0, w: 1, h: 1 },
-    // { i: 'f', x: 4, y: 0, w: 1, h: 1 },
-    // { i: 'g', x: 5, y: 0, w: 1, h: 1 },
-    // { i: 'h', x: 6, y: 0, w: 1, h: 1 },
-    // { i: 'i', x: 7, y: 0, w: 1, h: 1 },
-    // { i: 'j', x: 8, y: 0, w: 1, h: 1 },
-    // { i: 'q', x: 9, y: 0, w: 1, h: 1 },
-    // { i: 'k', x: 10, y: 0, w: 1, h: 1 },
-    // { i: 'l', x: 11, y: 0, w: 1, h: 1 },
-    // { i: 'm', x: 12, y: 0, w: 1, h: 1 },
-    // { i: 'n', x: 13, y: 0, w: 1, h: 1 },
-    // { i: 'o', x: 14, y: 0, w: 1, h: 1 },
-    // { i: 'p', x: 15, y: 0, w: 1, h: 1 },
   ];
   const [lay, setLay] = useState(layout);
 
   const handleDelete = (item) => {
     const temp = [...lay];
-    const l = temp.filter(layItme => layItme.i !== item.i);
-    setLay(l);
+    if (temp.length > 1) {
+      const l = temp.filter(layItme => layItme.i !== item.i);
+      setLay(l);
+    }
   }
   const onLayoutChange = (layout, layouts) => {
     if (!(layout[layout.length - 1]
@@ -75,10 +63,63 @@ function App() {
   }
 
   const handleAddImage = (e, index) => {
-    console.log(e.target.files[0],'e');
-    // refLayout1.current.childNodes[index].style
-    refLayout1.current.childNodes[index].style.backgroundImage = `url(${e.target.files[0]})`
-    console.log(refLayout1.current.childNodes[index].style.backgroundColor = "red",'ref')
+    var file = e.target.files[0];
+    var reader = new FileReader();
+
+    if (file && file.type.match('image')) {
+      reader.onload = function (e) {
+        console.log(e, 'e')
+        refLayout1.current.childNodes[index].style.backgroundSize = "cover"
+        refLayout1.current.childNodes[index].style.backgroundImage = `url(${e.target.result})`;
+      }
+      reader.readAsDataURL(file);
+    }
+    else {
+      reader.onload = function () {
+        var blob = new Blob([reader.result], { type: file.type });
+        var url = URL.createObjectURL(blob);
+        var video = document.createElement('video');
+        var video = document.createElement('video');
+        var timeupdate = function () {
+          if (snapImage()) {
+            video.removeEventListener('timeupdate', timeupdate);
+            video.pause();
+          }
+        };
+        video.addEventListener('loadeddata', function () {
+          if (snapImage()) {
+            video.removeEventListener('timeupdate', timeupdate);
+          }
+        });
+        var snapImage = function () {
+          var canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+          var image = canvas.toDataURL();
+          var success = image.length > 100000;
+          if (success) {
+            // var img = document.createElement('img');
+            // img.src = image;
+            // document.getElementsByTagName('div')[0].appendChild(img);
+            refLayout1.current.childNodes[index].style.backgroundSize = "cover"
+            refLayout1.current.childNodes[index].style.backgroundImage = `url(${image})`;
+            URL.revokeObjectURL(url);
+          }
+          return success;
+        };
+        video.addEventListener('timeupdate', timeupdate);
+        video.preload = 'metadata';
+        video.src = url;
+
+        // Load video in Safari / IE11
+        video.muted = true;
+        video.playsInline = true;
+        video.play();
+      }
+      reader.readAsArrayBuffer(file);
+    }
+
   }
 
   return (
@@ -119,7 +160,7 @@ function App() {
           onResizeStart={(layout, oldItem, newItem) => {
           }}
         >
-          {lay.map((item,index) => {
+          {lay.map((item, index) => {
             return <div key={item.i}>
               {item.i}
               <span
@@ -129,7 +170,7 @@ function App() {
                 x
               </span>
               <div>
-                <input type="file" name="add-image" onChange={(e) => handleAddImage(e,index)}/>
+                <input type="file" name="add-image" onChange={(e) => handleAddImage(e, index)} />
               </div>
             </div>
           })}
