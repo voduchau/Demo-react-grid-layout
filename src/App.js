@@ -50,6 +50,7 @@ function App() {
               if(layParam[i].x < 15){
                 console.log(layParam[i].x,'xx')
                 ++layParam[i].x;
+                layParam[i].w = 1;
                 layParam[i].y = 0;
               }
               else {
