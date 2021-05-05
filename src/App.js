@@ -4,17 +4,31 @@ import { useState, useEffect, useRef } from "react";
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css";
 
-import GridLayout from 'react-grid-layout';
+import GridLayout, {WidthProvider} from 'react-grid-layout';
+
+const MyLayout = WidthProvider(GridLayout);
+
 const maxHeight = 9;
 const maxWidth = 16;
 function App() {
   const [check, setCheck] = useState(0);
   const refLayout1 = useRef();
+  const [DeviceWidth, setDeviceWidth] = useState(1000);
+  const [DeviceHeight, setDeviceHeight] = useState(1000);
   const layout = [
     { i: 'b', x: 0, y: 0, w: 5, h: 5, isBounded: true },
     { i: 'c', x: 1, y: 0, w: 4, h: 4, isBounded: true },
   ];
   const [lay, setLay] = useState(layout);
+
+  useEffect(() => {
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+    setDeviceWidth(window.innerWidth);
+    setDeviceHeight(window.innerHeight);
+    console.log(height/9,'height')
+    console.log(width,'width')
+  },[])
 
   const handleDelete = (item) => {
     const temp = [...lay];
@@ -29,7 +43,7 @@ function App() {
       const temp = [...layout];
       let check = 0;
       const CalHeight = (layParam) => {
-        console.log(layParam[1], 'layParam')
+        console.log(layParam, 'layParam')
         for (let i = 0; i < layParam.length; i++) {
           if (layParam[i].y + layParam[i].h > maxHeight) {
             if (layParam[i].h > 1) {
@@ -66,6 +80,7 @@ function App() {
     var file = e.target.files[0];
     var reader = new FileReader();
 
+    console.log(refLayout1,'refLayout1')
     if (file && file.type.match('image')) {
       reader.onload = function (e) {
         console.log(e, 'e')
@@ -121,22 +136,24 @@ function App() {
     }
 
   }
-
   return (
     <div className="App">
       <div className="device-1">
         <GridLayout
           className="layout"
           layout={lay}
+          style={{width: "100%", border: "1px solid red", height: "100%"}}
           cols={16}
-          isBounded={true}
-          rowHeight={30}
+          isBounded={false}
+          rowHeight={DeviceHeight/9}
           autoSize={false}
-          width={500}
+          width={DeviceWidth}
           innerRef={refLayout1}
-          height={270}
+          // height={270}
           margin={[0, 0]}
-          isDroppable={true}
+          // isDraggable={false}
+          // isResizable={false}
+          isDroppable={false}
           onLayoutChange={onLayoutChange}
           onDrop={(layout, item, e) => {
             if (!(layout[layout.length - 1]
