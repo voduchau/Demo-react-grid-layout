@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css";
 
@@ -8,10 +8,11 @@ import GridLayout from 'react-grid-layout';
 const maxHeight = 9;
 const maxWidth = 16;
 function App() {
-  const [check, setCheck] = useState(0)
+  const [check, setCheck] = useState(0);
+  const refLayout1 = useRef();
   const layout = [
-    { i: 'b', x: 0, y: 0, w: 1, h: 1, isBounded: true },
-    { i: 'c', x: 1, y: 0, w: 1, h: 1, isBounded: true },
+    { i: 'b', x: 0, y: 0, w: 5, h: 5, isBounded: true },
+    { i: 'c', x: 1, y: 0, w: 4, h: 4, isBounded: true },
     // { i: 'd', x: 2, y: 0, w: 1, h: 1 },
     // { i: 'e', x: 3, y: 0, w: 1, h: 1 },
     // { i: 'f', x: 4, y: 0, w: 1, h: 1 },
@@ -40,26 +41,26 @@ function App() {
       const temp = [...layout];
       let check = 0;
       const CalHeight = (layParam) => {
-        console.log(layParam[1],'layParam')
-        for(let i = 0; i < layParam.length; i++) {
-          if(layParam[i].y + layParam[i].h > maxHeight){
-            if(layParam[i].h > 1){
+        console.log(layParam[1], 'layParam')
+        for (let i = 0; i < layParam.length; i++) {
+          if (layParam[i].y + layParam[i].h > maxHeight) {
+            if (layParam[i].h > 1) {
               --layParam[i].h;
             }
             else {
-              if(layParam[i].x < 15){
-                console.log(layParam[i].x,'xx')
+              if (layParam[i].x < 15) {
+                console.log(layParam[i].x, 'xx')
                 ++layParam[i].x;
                 layParam[i].w = 1;
                 layParam[i].y = 0;
               }
               else {
-                layParam.splice(i,1);
+                layParam.splice(i, 1);
               }
             }
             CalHeight(layParam)
           }
-          else if(i === layParam.length - 1){
+          else if (i === layParam.length - 1) {
             return layParam;
           }
           else {
@@ -73,6 +74,13 @@ function App() {
 
   }
 
+  const handleAddImage = (e, index) => {
+    console.log(e.target.files[0],'e');
+    // refLayout1.current.childNodes[index].style
+    refLayout1.current.childNodes[index].style.backgroundImage = `url(${e.target.files[0]})`
+    console.log(refLayout1.current.childNodes[index].style.backgroundColor = "red",'ref')
+  }
+
   return (
     <div className="App">
       <div className="device-1">
@@ -84,8 +92,9 @@ function App() {
           rowHeight={30}
           autoSize={false}
           width={500}
+          innerRef={refLayout1}
           height={270}
-          margin={[0,0]}
+          margin={[0, 0]}
           isDroppable={true}
           onLayoutChange={onLayoutChange}
           onDrop={(layout, item, e) => {
@@ -110,7 +119,7 @@ function App() {
           onResizeStart={(layout, oldItem, newItem) => {
           }}
         >
-          {lay.map(item => {
+          {lay.map((item,index) => {
             return <div key={item.i}>
               {item.i}
               <span
@@ -118,7 +127,10 @@ function App() {
                 onClick={() => handleDelete(item)}
               >
                 x
-        </span>
+              </span>
+              <div>
+                <input type="file" name="add-image" onChange={(e) => handleAddImage(e,index)}/>
+              </div>
             </div>
           })}
         </GridLayout>
@@ -130,7 +142,7 @@ function App() {
             let number = (lay.length) % (maxWidth);
 
             console.log((lay.length) % (maxWidth), 'check');
-            
+
             const item = {
               i: Math.random().toString(),
               x: number,
